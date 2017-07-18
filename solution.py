@@ -51,6 +51,9 @@ def assign_value(values, box, value):
 
 def naked_twins(values):
     """Eliminate values using the naked twins strategy.
+       If two cells in a group contain an identical pair of candidates and only those two candidates, then no other cells in that group could be those values.
+        These 2 candidates can be excluded from other cells in the group.
+    
     Args:
         values(dict): a dictionary of the form {'box_name': '123456789', ...}
 
@@ -58,8 +61,34 @@ def naked_twins(values):
         the values dictionary with the naked twins eliminated from peers.
     """
 
-    # Find all instances of naked twins
-    # Eliminate the naked twins as possibilities for their peers
+    #step one: find naked twins in rowunits, columnunits or squareunits
+    for unit in unitlist:
+        two_chars = {}
+        for box in unit:
+        #find boxes with two values:
+            if len(values[box]) == 2:
+                two_chars[box] = values[box]
+        #iterate over pairs and find twins
+        twins = defaultdict(list)
+        for key, value in two_chars.items():  
+            twins[value].append(key)
+        naked_twins = {}
+        for key, value in twins.items():
+            if len(value) == 2:
+                 naked_twins[key] = value
+        if len(naked_twins) == 0:
+            pass
+        #step two: find boxes containing elements from the twin pairs
+        else:
+            #key is the twin value, the values are the box numbers
+            for key, value in naked_twins.items():
+                for box in unit:
+                    if values[box] != key:
+                        for element in key:
+                            #step three: remove elements
+                            if element in values[box]:
+                                values[box] = values[box].replace(element, '')        
+    return values
 
 
 def grid_values(grid):
