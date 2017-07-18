@@ -1,7 +1,24 @@
+from collections import defaultdict
 assignments = []
 
 rows = 'ABCDEFGHI'
 cols = '123456789'
+
+diagonals = []
+
+
+def get_diagonals(rows, cols):
+    cols_reverse = cols[::-1]
+    d_one = []
+    d_two = []
+    for (row, col) in zip(rows, cols):
+        d_one.append(row + col)
+    for (row_, col_) in zip(rows, cols_reverse):
+        d_two.append(row_ + col_)
+    diagonals.append(d_one)
+    diagonals.append(d_two)
+    print (diagonals)
+    return diagonals
 
 # this is needed to create all boxes in the sudoku
 
@@ -26,10 +43,17 @@ square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI')
 # Element example:
 # square_units[0] = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3']
 # This is the top left square.
+diagonal_units = get_diagonals(rows, cols)
 
-unitlist = row_units + column_units + square_units
+unitlist = row_units + column_units + square_units + diagonal_units
+
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s], [])) - set([s])) for s in boxes)
+
+
+def create_create_diagonal_boxes(rows, cols):
+    for row, col in zip(rows, cols):
+        print (row[row], cols[col])
 
 
 def assign_value(values, box, value):
@@ -37,7 +61,6 @@ def assign_value(values, box, value):
     Please use this function to update your values dictionary!
     Assigns a value to a given box. If it updates the board record it.
     """
-
     # Don't waste memory appending actions that don't actually change any
     # values
     if values[box] == value:
@@ -53,7 +76,7 @@ def naked_twins(values):
     """Eliminate values using the naked twins strategy.
        If two cells in a group contain an identical pair of candidates and only those two candidates, then no other cells in that group could be those values.
         These 2 candidates can be excluded from other cells in the group.
-    
+
     Args:
         values(dict): a dictionary of the form {'box_name': '123456789', ...}
 
@@ -61,33 +84,33 @@ def naked_twins(values):
         the values dictionary with the naked twins eliminated from peers.
     """
 
-    #step one: find naked twins in rowunits, columnunits or squareunits
+    # step one: find naked twins in rowunits, columnunits or squareunits
     for unit in unitlist:
         two_chars = {}
         for box in unit:
-        #find boxes with two values:
+            # find boxes with two values:
             if len(values[box]) == 2:
                 two_chars[box] = values[box]
-        #iterate over pairs and find twins
+        # iterate over pairs and find twins
         twins = defaultdict(list)
-        for key, value in two_chars.items():  
+        for key, value in two_chars.items():
             twins[value].append(key)
         naked_twins = {}
         for key, value in twins.items():
             if len(value) == 2:
-                 naked_twins[key] = value
+                naked_twins[key] = value
         if len(naked_twins) == 0:
             pass
-        #step two: find boxes containing elements from the twin pairs
+        # step two: find boxes containing elements from the twin pairs
         else:
-            #key is the twin value, the values are the box numbers
+            # key is the twin value, the values are the box numbers
             for key, value in naked_twins.items():
                 for box in unit:
                     if values[box] != key:
                         for element in key:
-                            #step three: remove elements
+                            # step three: remove elements
                             if element in values[box]:
-                                values[box] = values[box].replace(element, '')        
+                                values[box] = values[box].replace(element, '')
     return values
 
 
@@ -117,6 +140,7 @@ def display(values):
     Args:
         values(dict): The sudoku in dictionary form
     """
+
     width = 1 + max(len(values[s]) for s in boxes)
     line = '+'.join(['-' * (width * 3)] * 3)
     for r in rows:
@@ -134,6 +158,7 @@ def eliminate(values):
         digit = values[box]
         for peer in peers[box]:
             values[peer] = values[peer].replace(digit, '')
+    display(values)
     return values
 
 
@@ -154,7 +179,8 @@ def reduce_puzzle(values):
         solved_values_before = len(
             [box for box in values.keys() if len(values[box]) == 1])
         eliminate(values)
-        only_choice(values)
+        naked_twins(values)
+        # only_choice(values)
         # Check how many boxes have a determined value, to compare
         solved_values_after = len(
             [box for box in values.keys() if len(values[box]) == 1])
