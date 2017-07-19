@@ -17,7 +17,6 @@ def get_diagonals(rows, cols):
         d_two.append(row_ + col_)
     diagonals.append(d_one)
     diagonals.append(d_two)
-    print (diagonals)
     return diagonals
 
 # this is needed to create all boxes in the sudoku
@@ -158,7 +157,6 @@ def eliminate(values):
         digit = values[box]
         for peer in peers[box]:
             values[peer] = values[peer].replace(digit, '')
-    display(values)
     return values
 
 
