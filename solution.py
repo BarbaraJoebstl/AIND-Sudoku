@@ -1,11 +1,11 @@
 from collections import defaultdict
+import itertools
 assignments = []
 
 rows = 'ABCDEFGHI'
 cols = '123456789'
 
 diagonals = []
-
 
 def get_diagonals(rows, cols):
     cols_reverse = cols[::-1]
@@ -19,9 +19,7 @@ def get_diagonals(rows, cols):
     diagonals.append(d_two)
     return diagonals
 
-# this is needed to create all boxes in the sudoku
-
-
+# create all boxes of the sudoku
 def cross(A, B):
     return [s + t for s in A for t in B]
 
@@ -48,12 +46,6 @@ unitlist = row_units + column_units + square_units + diagonal_units
 
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s], [])) - set([s])) for s in boxes)
-
-
-def create_create_diagonal_boxes(rows, cols):
-    for row, col in zip(rows, cols):
-        print (row[row], cols[col])
-
 
 def assign_value(values, box, value):
     """
@@ -100,6 +92,8 @@ def naked_twins(values):
                 naked_twins[key] = value
         if len(naked_twins) == 0:
             pass
+        if len(naked_twins) >= 2:
+            return False
         # step two: find boxes containing elements from the twin pairs
         else:
             # key is the twin value, the values are the box numbers
@@ -178,7 +172,7 @@ def reduce_puzzle(values):
             [box for box in values.keys() if len(values[box]) == 1])
         eliminate(values)
         naked_twins(values)
-        # only_choice(values)
+        #only_choice(values)
         # Check how many boxes have a determined value, to compare
         solved_values_after = len(
             [box for box in values.keys() if len(values[box]) == 1])
@@ -219,12 +213,12 @@ def solve(grid):
     Returns:
         The dictionary representation of the final sudoku grid. False if no solution exists.
     """
-    search(grid_values(grid))
+    return search(grid_values(grid))
 
 
 if __name__ == '__main__':
     diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
-    display(solve(diag_sudoku_grid))
+    solve(diag_sudoku_grid)
 
     try:
         from visualize import visualize_assignments
