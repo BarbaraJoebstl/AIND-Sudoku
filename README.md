@@ -2,12 +2,20 @@
 ## Introductory Project: Diagonal Sudoku Solver
 
 # Question 1 (Naked Twins)
-Q: How do we use constraint propagation to solve the naked twins problem?  
+Q: How do we use constraint propagation to solve the naked twins problem?
+
 A: If two cells in a group contain an identical pair of candidates and only those two candidates, then no other cells in that group could be those values. These 2 candidates can be excluded from other cells in the group.
+So we those identical pairs as a constraint propagation.
+  1. Find all identical pairs in boxes belonging to one rowunit, columnunit or squareunit
+  2. Find all boxes in a rowunit, columnunit or squareunit that are holding on of the numbers of the identified naked twins and delete this value from those boxes
+  3. The whole Sudoku can be solved using the ```eliminate()``` and the ```naked_twins()``` function repeatedly until the Sudoku is solved.
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: The constraint here are the two diagonals arrays. So we need to add them to the unitlist, so that the algorithm also takes care of the diagonals as units.
+  1. Find the boxes for the diagonals
+  2. Add them to the unitlist. 
+  
 
 ### Install
 
