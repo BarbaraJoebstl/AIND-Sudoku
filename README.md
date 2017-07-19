@@ -4,8 +4,7 @@
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?
 
-A: If two cells in a group contain an identical pair of candidates and only those two candidates, then no other cells in that group could be those values. These 2 candidates can be excluded from other cells in the group.
-So we those identical pairs as a constraint propagation.
+A: If two boxes in a unit of the unitlist contain an identical pair of candidates and only those two candidates, then no other boxes in that group could be those values. These 2 candidates can be excluded from other boxes in the unit.
   1. Find all identical pairs in boxes belonging to one rowunit, columnunit or squareunit
   2. Find all boxes in a rowunit, columnunit or squareunit that are holding on of the numbers of the identified naked twins and delete this value from those boxes
   3. The whole Sudoku can be solved using the ```eliminate()``` and the ```naked_twins()``` function repeatedly until the Sudoku is solved.
